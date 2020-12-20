@@ -9,8 +9,16 @@ StaticPopupDialogs["REPAIR_ALERT"] = {
   preferredIndex = 3
 }
 
+MyAddon.keyItemID = 138019
+
 function MyAddon.OnEvent(self, event, ...)
   events[event](self, ...)
+end
+
+function events:CHAT_MSG_PARTY(message, ...)
+  if text == '!keys' then
+    MyAddon.announceKey()
+  end
 end
 
 function events:PLAYER_LOGIN(...)
@@ -36,6 +44,19 @@ end
 
 function events:PLAYER_ROLES_ASSIGNED(...)
   if MyAddon.amTankInParty() then MyAddon.markSelfSquare() end
+end
+
+function MyAddon.announceKey()
+  for bag = 0, NUM_BAG_SLOTS do
+    for slot = 1, GetContainerNumSlots(bag)do
+      if GetContainerItemID(bag, slot) == MyAddon.keyItemID then
+        local link = GetContainerItemLink(bag, slot)
+        SendChatMessage(link, "PARTY")
+
+        return
+      end
+    end
+  end
 end
 
 function MyAddon.needsRepair()
