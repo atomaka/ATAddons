@@ -83,12 +83,13 @@ function MyAddon.announceKey()
 end
 
 function MyAddon.announceTaunts(_, _, event, _, _, srcName, _, _, _, dstName, _, _, spellId, spellName, ...)
-  if event != 'SPELL_CAST_SUCESS' || !MyAddon.taunts[spellId] then
+  if event ~= 'SPELL_CAST_SUCESS' or MyAddon.taunts[spellId] ~= true then
     return
   end
+  DEFAULT_CHAT_FRAME:AddMessage("LOOKING")
 
   message = format("TAUNT: %s used %s", srcName, spellName)
-  if dstName != nil then
+  if dstName ~= nil then
     message = format("%s on %s", message, dstName)
   end
 
