@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 90002
 ## Title: MyAddon
 ## Author: Andrew Tomaka
 ## Version: 0.1
