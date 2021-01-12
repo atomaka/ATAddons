@@ -9,14 +9,20 @@ StaticPopupDialogs["REPAIR_ALERT"] = {
   preferredIndex = 3
 }
 
-MyAddon.keyItemID = 138019
+MyAddon.keyItemID = 180653
 
 function MyAddon.OnEvent(self, event, ...)
   events[event](self, ...)
 end
 
+function events:CHAT_MSG_PARTY_LEADER(message, ...)
+  if message == '!keys' then
+    MyAddon.announceKey()
+  end
+end
+
 function events:CHAT_MSG_PARTY(message, ...)
-  if text == '!keys' then
+  if message == '!keys' then
     MyAddon.announceKey()
   end
 end
@@ -49,6 +55,7 @@ end
 function MyAddon.announceKey()
   for bag = 0, NUM_BAG_SLOTS do
     for slot = 1, GetContainerNumSlots(bag)do
+      itemID = GetContainerItemID(bag, slot)
       if GetContainerItemID(bag, slot) == MyAddon.keyItemID then
         local link = GetContainerItemLink(bag, slot)
         SendChatMessage(link, "PARTY")
@@ -112,3 +119,22 @@ f:SetScript("OnEvent", MyAddon.OnEvent)
 --[[ hooksecurefunc("TalkingHeadFrame_PlayCurrent", function()
   TalkingHeadFrame:Hide()
 end) ]]--
+
+function PaperDollFrame_SetMovementSpeed(statFrame, unit)
+	statFrame.wasSwimming = nil
+	statFrame.unit = unit
+	MovementSpeed_OnUpdate(statFrame)
+
+	statFrame.onEnterFunc = MovementSpeed_OnEnter
+	statFrame:SetScript("OnUpdate", MovementSpeed_OnUpdate)
+	statFrame:Show()
+end
+
+CharacterStatsPane.statsFramePool.resetterFunc =
+	function(pool, frame)
+		frame:SetScript("OnUpdate", nil)
+		frame.onEnterFunc = nil
+		frame.UpdateTooltip = nil
+		FramePool_HideAndClearAnchors(pool, frame)
+	end
+table.insert(PAPERDOLL_STATCATEGORIES[1].stats, { stat = "MOVESPEED"})
