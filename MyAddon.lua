@@ -10,6 +10,18 @@ StaticPopupDialogs["REPAIR_ALERT"] = {
 }
 
 MyAddon.keyItemID = 180653
+MyAddon.taunts =  {
+  [56222] = true,  -- Dark Command
+  [51399] = true,  -- Death Grip
+  [185245] = true, -- Torment
+  [6795] = true,   -- Growl
+  [115546] = true, -- Provke
+  [612124] = true, -- Hand of Reckoning
+  [355] = true,    -- Taunt
+
+  [1161] = true,   -- Challenging Shout
+  [204079] = true  -- Final Stand
+}
 
 function MyAddon.OnEvent(self, event, ...)
   events[event](self, ...)
@@ -27,9 +39,8 @@ function events:CHAT_MSG_PARTY(message, ...)
   end
 end
 
-function events:PLAYER_LOGIN(...)
-  -- found from some forums
-  local b=ActionButton8 _MH=_MH or(b:SetAttribute("*type5","macro")or SecureHandlerWrapScript(b,"PreClick",b,'Z=IsAltKeyDown()and 0 or(Z or 0)%8+1 self:SetAttribute("macrotext5","/wm [nomod]"..Z)'))or 1
+function events:COMBAT_LOG_EVENT_UNFILTERED(...)
+  MyAddon.announceTaunts(...)
 end
 
 function events:MERCHANT_SHOW(...)
@@ -43,13 +54,18 @@ function events:MERCHANT_SHOW(...)
   end
 end
 
-function events:PLAYER_UPDATE_RESTING(...)
-  -- Notify that we should repair
-  if MyAddon.needsRepair() then StaticPopup_Show("REPAIR_ALERT") end
+function events:PLAYER_LOGIN(...)
+  -- found from some forums
+  local b=ActionButton8 _MH=_MH or(b:SetAttribute("*type5","macro")or SecureHandlerWrapScript(b,"PreClick",b,'Z=IsAltKeyDown()and 0 or(Z or 0)%8+1 self:SetAttribute("macrotext5","/wm [nomod]"..Z)'))or 1
 end
 
 function events:PLAYER_ROLES_ASSIGNED(...)
   if MyAddon.amTankInParty() then MyAddon.markSelfSquare() end
+end
+
+function events:PLAYER_UPDATE_RESTING(...)
+  -- Notify that we should repair
+  if MyAddon.needsRepair() then StaticPopup_Show("REPAIR_ALERT") end
 end
 
 function MyAddon.announceKey()
@@ -64,6 +80,19 @@ function MyAddon.announceKey()
       end
     end
   end
+end
+
+function MyAddon.announceTaunts(_, _, event, _, _, srcName, _, _, _, dstName, _, _, spellId, spellName, ...)
+  if event != 'SPELL_CAST_SUCESS' || !MyAddon.taunts[spellId] then
+    return
+  end
+
+  message = format("TAUNT: %s used %s", srcName, spellName)
+  if dstName != nil then
+    message = format("%s on %s", message, dstName)
+  end
+
+  DEFAULT_CHAT_FRAME:AddMessage(message)
 end
 
 function MyAddon.needsRepair()
