@@ -16,7 +16,7 @@ MyAddon.taunts =  {
   [185245] = true, -- Torment
   [6795] = true,   -- Growl
   [115546] = true, -- Provke
-  [612124] = true, -- Hand of Reckoning
+  [62124] = true, -- Hand of Reckoning
   [355] = true,    -- Taunt
 
   [1161] = true,   -- Challenging Shout
@@ -40,7 +40,7 @@ function events:CHAT_MSG_PARTY(message, ...)
 end
 
 function events:COMBAT_LOG_EVENT_UNFILTERED(...)
-  MyAddon.announceTaunts(...)
+  MyAddon.announceTaunts(CombatLogGetCurrentEventInfo())
 end
 
 function events:MERCHANT_SHOW(...)
@@ -82,18 +82,24 @@ function MyAddon.announceKey()
   end
 end
 
-function MyAddon.announceTaunts(_, _, event, _, _, srcName, _, _, _, dstName, _, _, spellId, spellName, ...)
-  if event ~= 'SPELL_CAST_SUCESS' or MyAddon.taunts[spellId] ~= true then
+function MyAddon.announceTaunts(...)
+  event = select(2, ...)
+  spellId = select(12, ...)
+
+  if event ~= 'SPELL_CAST_SUCCESS' or MyAddon.taunts[spellId] ~= true then
     return
   end
-  DEFAULT_CHAT_FRAME:AddMessage("LOOKING")
 
-  message = format("TAUNT: %s used %s", srcName, spellName)
-  if dstName ~= nil then
-    message = format("%s on %s", message, dstName)
+  srcName = select(5, ...)
+  destName = select(9, ...)
+  spellName = select(13, ...)
+
+  message = format("|cffFF0000TAUNT:|r %s used %s", srcName, spellName)
+  if destName ~= nil then
+    message = format("%s on %s", message, destName)
   end
 
-  DEFAULT_CHAT_FRAME:AddMessage(message)
+  print(message)
 end
 
 function MyAddon.needsRepair()
