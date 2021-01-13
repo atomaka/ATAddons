@@ -82,20 +82,9 @@ function MyAddon.announceKey()
   end
 end
 
-local function multiSelect(table, ...)
-  result = {}
-  for i, val in ipairs(...) do
-    table.insert(result, table[val])
-  end
-end
-
 function MyAddon.announceTaunts(...)
   event = select(2, ...)
   spellId = select(12, ...)
-
-  a, b = multiSelect(..., 2, 12)
-  print(a)
-  print(b)
 
   if event ~= 'SPELL_CAST_SUCCESS' or MyAddon.taunts[spellId] ~= true then
     return
