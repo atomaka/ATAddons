@@ -135,11 +135,7 @@ function MyAddon.amTankInParty()
   local isTank = UnitGroupRolesAssigned("player") == "TANK"
   local notAlreadyMarked = GetRaidTargetIndex("player") == nil
 
-  if (isParty and isTank and notAlreadyMarked) then
-    return true
-  else
-    return false
-  end
+  return isParty and isTank and notAlreadyMarked
 end
 
 function MyAddon.markSelfSquare()
