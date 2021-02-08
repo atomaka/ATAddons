@@ -50,7 +50,7 @@ function events:MERCHANT_SHOW(...)
   -- Repair if we need to and merchant allows it
   if CanMerchantRepair() and MyAddon.needsRepair() then
     RepairAllItems(CanGuildBankRepair())
-    DEFAULT_CHAT_FRAME:AddMessage("Your items have been repaired")
+    print("Your items have been repaired")
   end
 end
 
@@ -123,7 +123,7 @@ function MyAddon.sellGrayItems()
     for slot = 1, GetContainerNumSlots(bag) do
       local name = GetContainerItemLink(bag, slot)
       if name and string.find(name, "ff9d9d9d") then
-        DEFAULT_CHAT_FRAME:AddMessage("Selling "..name)
+        print("Selling "..name)
         UseContainerItem(bag, slot)
       end
     end
@@ -135,11 +135,7 @@ function MyAddon.amTankInParty()
   local isTank = UnitGroupRolesAssigned("player") == "TANK"
   local notAlreadyMarked = GetRaidTargetIndex("player") == nil
 
-  if (isParty and isTank and notAlreadyMarked) then
-    return true
-  else
-    return false
-  end
+  return isParty and isTank and notAlreadyMarked
 end
 
 function MyAddon.markSelfSquare()
