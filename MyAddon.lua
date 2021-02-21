@@ -153,14 +153,20 @@ function MyAddon.needsRepair()
 end
 
 function MyAddon.sellGrayItems()
+  sellTotal = 0
   for bag = 0, NUM_BAG_SLOTS do
     for slot = 1, GetContainerNumSlots(bag) do
-      local name = GetContainerItemLink(bag, slot)
-      if name and string.find(name, "ff9d9d9d") then
-        print("Selling "..name)
+      local _, count, _, quality, _, _, link = GetContainerItemInfo(bag, slot)
+      if quality and quality == 0 then
+        local price = select(11, GetItemInfo(link))
+        sellTotal = sellTotal + (price * count)
+        print("Selling "..count.."x"..link)
         UseContainerItem(bag, slot)
       end
     end
+  end
+  if sellTotal ~= 0 then
+    print("Made "..GetCoinTextureString(sellTotal))
   end
 end
 
