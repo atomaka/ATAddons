@@ -34,6 +34,10 @@ MyAddon.taunts =  {
   [1161] = true,   -- Challenging Shout
   [204079] = true  -- Final Stand
 }
+MyAddon.slots = {
+  "HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot",
+  "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"
+}
 
 function MyAddon.OnEvent(self, event, ...)
   events[event](self, ...)
@@ -137,13 +141,8 @@ function MyAddon.activateGoliath()
 end
 
 function MyAddon.needsRepair()
-  local slots = {
-    "HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot",
-    "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"
-  }
-
-  for slot = 1, #slots do
-    local id = GetInventorySlotInfo(slots[slot])
+  for slot = 1, #MyAddon.slots do
+    local id = GetInventorySlotInfo(MyAddon.slots[slot])
     local cur, max = GetInventoryItemDurability(id)
 
     if max and cur ~= max then return true end
