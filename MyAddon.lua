@@ -21,6 +21,8 @@ StaticPopupDialogs["GOLIATH_MISSING"] = {
   preferredIndex = 3
 }
 
+SLASH_MYADDON1 = "/ta"
+
 MyAddon.keyItemID = 180653
 MyAddon.taunts =  {
   [56222] = true,  -- Dark Command
@@ -40,6 +42,12 @@ MyAddon.slots = {
 }
 inspectInitialized = false
 local InspectFontStrings = {}
+
+function MyAddon.SlashHandler(cmd)
+  if cmd == "frames" then
+    MyAddon.moveFrames()
+  end
+end
 
 function MyAddon.OnEvent(self, event, ...)
   events[event](self, ...)
@@ -70,7 +78,7 @@ function events:INSPECT_READY(guid)
 
 
   unit = GetUnitFromGuid(guid)
-  if unit and CanInspect(unit) then
+  if unit and CanInspect(unit) and inspectInitialized then
     local itemLevel = C_PaperDollInfo.GetInspectItemLevel(unit)
     InspectFontStrings["itemLevel"]:SetText(itemLevel)
   end
@@ -122,6 +130,18 @@ end
 function events:PLAYER_UPDATE_RESTING(...)
   -- Notify that we should repair
   if MyAddon.needsRepair() then StaticPopup_Show("REPAIR_ALERT") end
+end
+
+function MyAddon.moveFrames()
+  print("Moving frames to MyAddon default locations")
+  PlayerFrame:ClearAllPoints()
+  PlayerFrame:SetPoint("CENTER",UIParent,-350,-225)PlayerFrame:SetUserPlaced(true)
+
+  TargetFrame:ClearAllPoints()
+  TargetFrame:SetPoint("CENTER",UIParent,350,-225)TargetFrame:SetUserPlaced(true)
+
+  FocusFrame:ClearAllPoints()
+  FocusFrame:SetPoint("CENTER",UIParent,-350,150)TargetFrame:SetUserPlaced(true)
 end
 
 function MyAddon.announceKey()
@@ -250,3 +270,5 @@ for i = 1, 7 do
   chat:SetShadowOffset(0, 0)
   chat:SetShadowColor(0, 0, 0, 0)
 end
+
+SlashCmdList["MYADDON"] = MyAddon.SlashHandler
