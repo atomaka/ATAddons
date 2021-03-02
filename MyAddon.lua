@@ -38,9 +38,42 @@ MyAddon.slots = {
   "HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot",
   "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"
 }
+inspectInitialized = false
+local InspectFontStrings = {}
 
 function MyAddon.OnEvent(self, event, ...)
   events[event](self, ...)
+end
+
+function GetUnitFromGuid(guid)
+  if UnitGUID("target") == guid then return "target"
+  elseif IsInRaid() then
+    for i = 1, MAX_RAID_MEMBERS do
+      if UnitGUID("raid"..i) == guid then return "raid"..i end
+    end
+  elseif IsInGroup() then
+    for i = 1, MAX_PARTY_MEMBERS do
+      if UnitGUID("party"..i) == guid then return "party"..i end
+    end
+  else return nil end
+end
+
+function events:INSPECT_READY(guid)
+  if not inspectInitialized and InspectFrame then
+    InspectFontStrings["itemLevel"] = InspectFrame:CreateFontString(nil, "OVERLAY")
+    InspectFontStrings["itemLevel"]:SetPoint("BOTTOMRIGHT", -5, 5)
+    InspectFontStrings["itemLevel"]:SetFont("Fonts\\FRIZQT__.ttf", 24, "OUTLINE")
+    InspectFontStrings["itemLevel"]:SetTextColor(1, 1, 1)
+
+    inspectInitialized = true
+  end
+
+
+  unit = GetUnitFromGuid(guid)
+  if unit and CanInspect(unit) then
+    local itemLevel = C_PaperDollInfo.GetInspectItemLevel(unit)
+    InspectFontStrings["itemLevel"]:SetText(itemLevel)
+  end
 end
 
 function events:GOSSIP_SHOW()
