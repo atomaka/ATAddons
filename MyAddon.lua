@@ -121,6 +121,27 @@ end
 function events:PLAYER_LOGIN(...)
   -- found from some forums
   local b=ActionButton8 _MH=_MH or(b:SetAttribute("*type5","macro")or SecureHandlerWrapScript(b,"PreClick",b,'Z=IsAltKeyDown()and 0 or(Z or 0)%8+1 self:SetAttribute("macrotext5","/wm [nomod]"..Z)'))or 1
+
+  QuickJoinToastButton:Hide()
+  ChatFrameChannelButton:Hide()
+  ChatFrameMenuButton:Hide()
+  ChatFrame1ButtonFrame:Hide()
+
+  -- ChatFrame1.ScrollBar:Hide()
+  -- ChatFrame1.ScrollToBottomButton:Hide()
+
+  ChatFrame1:SetWidth(400)
+  ChatFrame1:SetHeight(150)
+
+  ChatFrame1:ClearAllPoints()
+  ChatFrame1:SetClampRectInsets(0, 0, 0, 0)
+  ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+
+  ChatFrame1EditBox:ClearAllPoints()
+  ChatFrame1EditBox:SetPoint("BOTTOMLEFT", ChatFrame1, "TOPLEFT", 0, 0)
+  ChatFrame1EditBox:SetPoint("RIGHT", ChatFrame1, 0, 0)
+
+  ChatFrame1:SetUserPlaced(true)
 end
 
 function events:PLAYER_ROLES_ASSIGNED(...)
