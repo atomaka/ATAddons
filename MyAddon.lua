@@ -144,6 +144,20 @@ function events:PLAYER_LOGIN(...)
   ChatFrame1:SetUserPlaced(true)
 end
 
+function events:PLAYER_REGEN_DISABLED(...)
+  StopwatchFrame:Show()
+  Stopwatch_Clear()
+  Stopwatch_Play()
+end
+
+function events:PLAYER_REGEN_ENABLED(...)
+  Stopwatch_Pause()
+end
+
+function events:PLAYER_DEAD(...)
+  Stopwatch_Pause()
+end
+
 function events:PLAYER_ROLES_ASSIGNED(...)
   if MyAddon.amTankInParty() then MyAddon.markSelfSquare() end
 end
