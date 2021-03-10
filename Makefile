@@ -1,6 +1,5 @@
 install:
-	cp MyAddon.lua $$WOW_ADDON_DIR/MyAddon/
-	cp MyAddon.toc $$WOW_ADDON_DIR/MyAddon/
+	cp -r ATMe/ $$WOW_ADDON_DIR
 
 update:
-	cp -r $$WOW_ADDON_DIR/MyAddon/* .
+	cp -r $$WOW_ADDON_DIR/ATMe .

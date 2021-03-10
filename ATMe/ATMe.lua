@@ -1,4 +1,4 @@
-local f, MyAddon, events = CreateFrame("Frame"), {}, {}
+local f, ATMe, events = CreateFrame("Frame"), {}, {}
 
 StaticPopupDialogs["REPAIR_ALERT"] = {
   text = "Remember to repair your gear",
@@ -21,10 +21,10 @@ StaticPopupDialogs["GOLIATH_MISSING"] = {
   preferredIndex = 3
 }
 
-SLASH_MYADDON1 = "/ta"
+SLASH_ATME1 = "/ta"
 
-MyAddon.keyItemID = 180653
-MyAddon.taunts =  {
+ATMe.keyItemID = 180653
+ATMe.taunts =  {
   [56222] = true,  -- Dark Command
   [51399] = true,  -- Death Grip
   [185245] = true, -- Torment
@@ -36,20 +36,20 @@ MyAddon.taunts =  {
   [1161] = true,   -- Challenging Shout
   [204079] = true  -- Final Stand
 }
-MyAddon.slots = {
+ATMe.slots = {
   "HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot",
   "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"
 }
 inspectInitialized = false
 local InspectFontStrings = {}
 
-function MyAddon.SlashHandler(cmd)
+function ATMe.SlashHandler(cmd)
   if cmd == "frames" then
-    MyAddon.moveFrames()
+    ATMe.moveFrames()
   end
 end
 
-function MyAddon.OnEvent(self, event, ...)
+function ATMe.OnEvent(self, event, ...)
   events[event](self, ...)
 end
 
@@ -88,31 +88,31 @@ function events:GOSSIP_SHOW()
   local isNecroticWake = GetZoneText() == 'The Necrotic Wake'
   local isSteward = GetUnitName('npc') == 'Steward'
 
-  if isNecroticWake and isSteward then MyAddon.activateGoliath() end
+  if isNecroticWake and isSteward then ATMe.activateGoliath() end
 end
 
 function events:CHAT_MSG_PARTY_LEADER(message, ...)
   if message == '!keys' then
-    MyAddon.announceKey()
+    ATMe.announceKey()
   end
 end
 
 function events:CHAT_MSG_PARTY(message, ...)
   if message == '!keys' then
-    MyAddon.announceKey()
+    ATMe.announceKey()
   end
 end
 
 function events:COMBAT_LOG_EVENT_UNFILTERED(...)
-  MyAddon.announceTaunts(CombatLogGetCurrentEventInfo())
+  ATMe.announceTaunts(CombatLogGetCurrentEventInfo())
 end
 
 function events:MERCHANT_SHOW(...)
   -- Sell all gray items
-  MyAddon.sellGrayItems()
+  ATMe.sellGrayItems()
 
   -- Repair if we need to and merchant allows it
-  if CanMerchantRepair() and MyAddon.needsRepair() then
+  if CanMerchantRepair() and ATMe.needsRepair() then
     RepairAllItems(CanGuildBankRepair())
     print("Your items have been repaired")
   end
@@ -159,16 +159,16 @@ function events:PLAYER_DEAD(...)
 end
 
 function events:PLAYER_ROLES_ASSIGNED(...)
-  if MyAddon.amTankInParty() then MyAddon.markSelfSquare() end
+  if ATMe.amTankInParty() then ATMe.markSelfSquare() end
 end
 
 function events:PLAYER_UPDATE_RESTING(...)
   -- Notify that we should repair
-  if MyAddon.needsRepair() then StaticPopup_Show("REPAIR_ALERT") end
+  if ATMe.needsRepair() then StaticPopup_Show("REPAIR_ALERT") end
 end
 
-function MyAddon.moveFrames()
-  print("Moving frames to MyAddon default locations")
+function ATMe.moveFrames()
+  print("Moving frames to ATMe default locations")
   PlayerFrame:ClearAllPoints()
   PlayerFrame:SetPoint("CENTER",UIParent,-350,-225)PlayerFrame:SetUserPlaced(true)
 
@@ -179,11 +179,11 @@ function MyAddon.moveFrames()
   FocusFrame:SetPoint("CENTER",UIParent,-350,150)TargetFrame:SetUserPlaced(true)
 end
 
-function MyAddon.announceKey()
+function ATMe.announceKey()
   for bag = 0, NUM_BAG_SLOTS do
     for slot = 1, GetContainerNumSlots(bag)do
       itemID = GetContainerItemID(bag, slot)
-      if GetContainerItemID(bag, slot) == MyAddon.keyItemID then
+      if GetContainerItemID(bag, slot) == ATMe.keyItemID then
         local link = GetContainerItemLink(bag, slot)
         SendChatMessage(link, "PARTY")
 
@@ -193,11 +193,11 @@ function MyAddon.announceKey()
   end
 end
 
-function MyAddon.announceTaunts(...)
+function ATMe.announceTaunts(...)
   event = select(2, ...)
   spellId = select(12, ...)
 
-  if event ~= 'SPELL_CAST_SUCCESS' or MyAddon.taunts[spellId] ~= true then
+  if event ~= 'SPELL_CAST_SUCCESS' or ATMe.taunts[spellId] ~= true then
     return
   end
 
@@ -213,7 +213,7 @@ function MyAddon.announceTaunts(...)
   print(message)
 end
 
-function MyAddon.activateGoliath()
+function ATMe.activateGoliath()
   options = C_GossipInfo.GetOptions()
 
   found = false
@@ -228,9 +228,9 @@ function MyAddon.activateGoliath()
   if not found then StaticPopup_Show("GOLIATH_MISSING") end
 end
 
-function MyAddon.needsRepair()
-  for slot = 1, #MyAddon.slots do
-    local id = GetInventorySlotInfo(MyAddon.slots[slot])
+function ATMe.needsRepair()
+  for slot = 1, #ATMe.slots do
+    local id = GetInventorySlotInfo(ATMe.slots[slot])
     local cur, max = GetInventoryItemDurability(id)
 
     if max and cur ~= max then return true end
@@ -239,7 +239,7 @@ function MyAddon.needsRepair()
   return false
 end
 
-function MyAddon.sellGrayItems()
+function ATMe.sellGrayItems()
   sellTotal = 0
   for bag = 0, NUM_BAG_SLOTS do
     for slot = 1, GetContainerNumSlots(bag) do
@@ -257,7 +257,7 @@ function MyAddon.sellGrayItems()
   end
 end
 
-function MyAddon.amTankInParty()
+function ATMe.amTankInParty()
   local isParty = UnitInRaid("player") == nil
   local isTank = UnitGroupRolesAssigned("player") == "TANK"
   local notAlreadyMarked = GetRaidTargetIndex("player") == nil
@@ -265,7 +265,7 @@ function MyAddon.amTankInParty()
   return isParty and isTank and notAlreadyMarked
 end
 
-function MyAddon.markSelfSquare()
+function ATMe.markSelfSquare()
   SetRaidTarget("player", 6)
 end
 
@@ -273,7 +273,7 @@ end
 for event, method in pairs(events) do
   f:RegisterEvent(event)
 end
-f:SetScript("OnEvent", MyAddon.OnEvent)
+f:SetScript("OnEvent", ATMe.OnEvent)
 
 --[[ hooksecurefunc("TalkingHeadFrame_PlayCurrent", function()
   TalkingHeadFrame:Hide()
@@ -306,4 +306,4 @@ for i = 1, 7 do
   chat:SetShadowColor(0, 0, 0, 0)
 end
 
-SlashCmdList["MYADDON"] = MyAddon.SlashHandler
+SlashCmdList["ATME"] = ATMe.SlashHandler
