@@ -1,1 +1,2 @@
 export WOW_ADDON_DIR=
+export CURSEFORGE_TOKEN=
