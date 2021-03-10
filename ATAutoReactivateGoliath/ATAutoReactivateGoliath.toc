@@ -1,0 +1,6 @@
+## Interface: 90005
+## Title: ATReactivateGoliath
+## Author: Andrew Tomaka
+## Version: 1.0
+
+ATAutoReactivateGoliath.lua
