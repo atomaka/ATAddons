@@ -6,6 +6,9 @@ update:
 	cp -r $$WOW_ADDON_DIR/ATMe .
 	cp -r $$WOW_ADDON_DIR/ATAutoReactivateGoliath .
 
+mirror:
+	git push --mirror git@github.com:atomaka/ATAddons.git
+
 clean:
 	rm -f ATAutoReactivateGoliath.zip
 
