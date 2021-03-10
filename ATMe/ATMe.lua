@@ -9,18 +9,6 @@ StaticPopupDialogs["REPAIR_ALERT"] = {
   preferredIndex = 3
 }
 
-StaticPopupDialogs["GOLIATH_MISSING"] = {
-  text = "Option to repair goliath not found; move closer",
-  button1 = "Ok",
-  OnAccept = function()
-    C_GossipInfo.CloseGossip()
-  end,
-  timeout = 5,
-  whileDead = false,
-  hideOnEscape = true,
-  preferredIndex = 3
-}
-
 SLASH_ATME1 = "/ta"
 
 ATMe.keyItemID = 180653
@@ -82,13 +70,6 @@ function events:INSPECT_READY(guid)
     local itemLevel = C_PaperDollInfo.GetInspectItemLevel(unit)
     InspectFontStrings["itemLevel"]:SetText(itemLevel)
   end
-end
-
-function events:GOSSIP_SHOW()
-  local isNecroticWake = GetZoneText() == 'The Necrotic Wake'
-  local isSteward = GetUnitName('npc') == 'Steward'
-
-  if isNecroticWake and isSteward then ATMe.activateGoliath() end
 end
 
 function events:CHAT_MSG_PARTY_LEADER(message, ...)
@@ -211,21 +192,6 @@ function ATMe.announceTaunts(...)
   end
 
   print(message)
-end
-
-function ATMe.activateGoliath()
-  options = C_GossipInfo.GetOptions()
-
-  found = false
-  for k, v in pairs(options) do
-    if v['name'] == 'Can you reactivate this goliath?' then
-      found = true
-      C_GossipInfo.SelectOption(k)
-      break
-    end
-  end
-
-  if not found then StaticPopup_Show("GOLIATH_MISSING") end
 end
 
 function ATMe.needsRepair()
