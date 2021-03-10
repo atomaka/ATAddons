@@ -1,4 +1,4 @@
-local f, ATAutoReactivateGoliath, events = CreateFrame("Frame"), {}, {}
+local f = CreateFrame("Frame")
 
 StaticPopupDialogs["GOLIATH_MISSING"] = {
   text = "Option to repair goliath not found; move closer",
