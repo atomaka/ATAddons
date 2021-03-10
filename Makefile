@@ -20,6 +20,6 @@ upload: archive
 		https://wow.curseforge.com/api/projects/$$CURSEFORGE_PROJECT_ID/upload-file
 
 version:
-	curl -H "X-Api-Token: $$CURSEFORGE_TOKEN" \
+	@curl -s -H "X-Api-Token: $$CURSEFORGE_TOKEN" \
 		https://wow.curseforge.com/api/game/versions | \
 		jq ".[-1] | .id"
