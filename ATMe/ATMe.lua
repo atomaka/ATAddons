@@ -125,11 +125,11 @@ function events:PLAYER_UPDATE_RESTING(...)
 end
 
 function ATMe.announceKey()
-  for bag = 0, NUM_BAG_SLOTS do
-    for slot = 1, GetContainerNumSlots(bag)do
-      itemID = GetContainerItemID(bag, slot)
-      if GetContainerItemID(bag, slot) == ATMe.keyItemID then
-        local link = GetContainerItemLink(bag, slot)
+  for bag = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
+    for slot = 1, C_ContainerGetContainerNumSlots(bag)do
+      itemID = C_Container.GetContainerItemID(bag, slot)
+      if C_Container.GetContainerItemID(bag, slot) == ATMe.keyItemID then
+        local link = C_Container.GetContainerItemLink(bag, slot)
         SendChatMessage(link, "PARTY")
 
         return
@@ -171,14 +171,19 @@ end
 
 function ATMe.sellGrayItems()
   sellTotal = 0
-  for bag = 0, NUM_BAG_SLOTS do
-    for slot = 1, GetContainerNumSlots(bag) do
-      local _, count, _, quality, _, _, link = GetContainerItemInfo(bag, slot)
+  for bag = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
+    for slot = 1, C_Container.GetContainerNumSlots(bag) do
+      local item = C_Container.GetContainerItemInfo(bag, slot)
+
+      local count = item and item.stackCount
+      local quality = item and item.quality
+      local link = item and item.hyperlink
+
       if quality and quality == 0 then
         local price = select(11, GetItemInfo(link))
         sellTotal = sellTotal + (price * count)
         print("Selling "..count.."x"..link)
-        UseContainerItem(bag, slot)
+        C_Container.UseContainerItem(bag, slot)
       end
     end
   end
